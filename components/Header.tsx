@@ -1,48 +1,43 @@
-import {
-  ClerkProvider,
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
-import Image from "next/image";
+
+
 import Link from "next/link";
+import Image from "next/image";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { Button } from "./ui/button";
+import Navitems from "./Navitems";
+import MobileNav from "./MobileNav";
 const Header = () => {
   return (
-    <div>
-      <header className="w-full border-b">
-        <div className="wrapper flex items-center justify-between">
-          <Link href="/" className="w-36 ">
+    <header className="w-full border-b px-10">
+      <div className="wrapper flex items-center justify-between">
+      <Link href="/" className="w-36 ">
             <Image
-              src="/assets/images/logo2.svg"
-              width={130}
+              src="/assets/images/logo.png"
+              width={80}
               height={40}
-              alt="Hoster Logo"
+              alt="Stock Manager Logo"
             />
           </Link>
+       <SignedIn>
+        <nav className=" hidden md:flex  w-full max-w-xs">
+            <Navitems/>
+        </nav>
+       </SignedIn>
+        <div className="flex w-32 justify-end">
           <SignedIn>
-            <nav className="md:flex-between hidden w-full max-w-xs">
-              fasdfdsfdsf
-            </nav>
+            <UserButton afterSignOutUrl="/" />
+            <MobileNav/>
           </SignedIn>
-          <div className="flex w-80 justify-end mr-20">
-            <SignedIn>
-              <div className="w-full flex justify-end h-40 ml-12 ">
-                {" "}
-                
-                <UserButton afterSignOutUrl="/"  />
-              </div>
-            </SignedIn>
-            <SignedOut>
-              <button className="rounded-full ">
-                <Link href="/sign-in">login</Link>
-              </button>
-            </SignedOut>
-          </div>
+          <SignedOut>
+            <Button asChild className="rounded-full" size="lg">
+              <Link href="/sign-in">login</Link>
+            </Button>
+          </SignedOut>
         </div>
-      </header>
-    </div>
+      </div>
+    </header>
   );
 };
 
 export default Header;
+

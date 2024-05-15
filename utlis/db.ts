@@ -1,4 +1,6 @@
 import mongoose from 'mongoose';
+import { CreateUserParams } from '@/types';
+import User from './models/user.model';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -16,6 +18,6 @@ export const connectToDatabase = async () => {
 
   cached.conn = await cached.promise;
   console.log('Connected to MongoDB')
- // console.log(cached.conn)
+
   return cached.conn;
 }
