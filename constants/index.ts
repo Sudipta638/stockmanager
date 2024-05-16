@@ -25,3 +25,17 @@ export const headerLinks = [
     isFree: false,
     url: '',
   }
+
+  export const symbolsname =[
+    {symbol: "TSCO.LON",},
+    {symbol:"TSCDF"},
+    {symbol:"TSCDY"},
+    {symbol:"TCO2.FRK"},
+    {symbol:"TCO0.FRK"}
+  ]
+export const Watchlists =[
+  {id:"Core WitchList"},
+  {id:"A WitchList"},
+  {id:"B WitchList"},
+  {id:"C WitchList"},
+]
