@@ -59,7 +59,7 @@ const CreateForm = () => {
       ...values,
       clerkId: user?.id ?? "",
     };
-
+    
     try {
       // Make a POST request to create a new watchlist
       const response = await fetch("/api/watchlist/create", {

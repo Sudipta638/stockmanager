@@ -32,15 +32,24 @@ export type CreateUserParams = {
     }
     path: string
   }
-  
+  export type WatchListParams ={
+    WatchListname: string,
+    Companyname: string[],
+  }
+
   export interface CreateWatchListParams {
     WatchListname: string;
     Companyname: string[];
     clerkId: string;
   }
   
+
   export interface UpdateWatchListParams {
     WatchListname?: string;
     Companyname?: string[];
     clerkId?: string;
+  }
+
+  export interface GetWatchListParams {
+    clerkId: string;
   }

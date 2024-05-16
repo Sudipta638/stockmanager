@@ -10,6 +10,8 @@ export const handleError = (error: unknown) => {
     throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
 }
 
+
+
 // Create a new watchlist
 export async function createWatchList(watchList: CreateWatchListParams) {
   try {
@@ -18,7 +20,7 @@ export async function createWatchList(watchList: CreateWatchListParams) {
    
     // Check if watchlist already exists
     if (existingWatchList) {
-    return JSON.parse(JSON.stringify(204))
+    return JSON.parse(JSON.stringify(409))
     }
    
     // Create watchlist if it doesn't exist
@@ -32,19 +34,35 @@ export async function createWatchList(watchList: CreateWatchListParams) {
   }
 }
 
+
+
+
+// Get all watchlists
 export async function getWatchListById(clerkId: string) {
     try {
+
       await connectToDatabase()
-  
-      const watchList = await WatchList.findOne({ clerkId })
-  
-      if (!watchList) throw new Error('WatchList not found')
+      const watchList = await WatchList.find({ clerkId })
+      
+      // Check if watchlist exists
+      if (!watchList || watchList.length === 0) {
+        return JSON.parse(JSON.stringify(404))
+      }
+
+      // Return watchlist
       return JSON.parse(JSON.stringify(watchList))
+
     } catch (error) {
-      handleError(error)
+    
+    // Handle error
+      console.log(error)
+      return JSON.parse(JSON.stringify(500))
     }
-  }
+
+}
   
+
+
   export async function deleteWatchList(clerkId: string) {
     try {
       await connectToDatabase()

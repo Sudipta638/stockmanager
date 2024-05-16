@@ -9,7 +9,7 @@ export const headerLinks = [
     },
     {
       label: 'My Watchlists',
-      route: '/profile',
+      route: '/watchlist/get-watchlists',
     },
   ]
   

@@ -1,6 +1,4 @@
 //Importing all the required dependencies
-import { connectToDatabase } from "@/utlis/db";
-import WatchList from "@/utlis/models/watchlist.model";
 import { CreateWatchListParams, UpdateWatchListParams } from "@/types";
 import { createWatchList } from "@/utlis/actions/watchlist.action";
 
