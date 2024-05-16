@@ -1,8 +1,7 @@
 import mongoose from 'mongoose';
-import { CreateUserParams } from '@/types';
-import User from './models/user.model';
-
 const MONGODB_URI = process.env.MONGODB_URI;
+
+
 
 let cached = (global as any).mongoose || { conn: null, promise: null };
 

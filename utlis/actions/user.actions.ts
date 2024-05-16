@@ -3,15 +3,15 @@
 import { revalidatePath } from 'next/cache'
 import { connectToDatabase } from '../db'
 import User  from '../models/user.model'
-import  Event  from '../models/category.model'
-import  Order  from '../models/order.model'
-
-
 import { CreateUserParams, UpdateUserParams } from '@/types'
+
+
 export const handleError = (error: unknown) => {
-    console.error(error)
-    throw new Error(typeof error === 'string' ? error : JSON.stringify(error))
+    console.error(error);
+    throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
   }
+
+// Create a new user
 export async function createUser(user: CreateUserParams) {
   try {
     await connectToDatabase()
@@ -23,6 +23,8 @@ export async function createUser(user: CreateUserParams) {
   }
 }
 
+
+// Get a user by ID
 export async function getUserById(userId: string) {
   try {
     await connectToDatabase()
@@ -36,6 +38,8 @@ export async function getUserById(userId: string) {
   }
 }
 
+
+// Get a user by clerkId
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
     await connectToDatabase()
@@ -49,6 +53,8 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
   }
 }
 
+
+// Delete a user by clerkId
 export async function deleteUser(clerkId: string) {
   try {
     await connectToDatabase()
