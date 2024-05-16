@@ -5,7 +5,7 @@ export const headerLinks = [
     },
     {
       label: 'Create Watchlist',
-      route: '/events/create',
+      route: '/watchlist/create',
     },
     {
       label: 'My Watchlists',
