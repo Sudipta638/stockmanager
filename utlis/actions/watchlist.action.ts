@@ -60,7 +60,54 @@ export async function getWatchListById(clerkId: string) {
     }
 
 }
+ 
+
+// Get watchlist by name and ID
+export async function getWatchListByNameAndId(watchListName: string, clerkId: string) {
+  try {
+    await connectToDatabase()
+    const watchList = await WatchList.findOne({ WatchListname: watchListName, clerkId })
   
+    // Check if watchlist exists
+    if (!watchList)
+      return JSON.parse(JSON.stringify(404))
+
+    // Return watchlist
+    return JSON.parse(JSON.stringify(watchList))
+  } catch (error) {
+
+    // Handle error
+    return JSON.parse(JSON.stringify(500))
+   
+  }
+}
+
+
+// Update watchlist by name and ID
+export async function updateWatchListbyNameandID(watchListName: string, clerkId: string, watchList: UpdateWatchListParams) {
+  try {
+    await connectToDatabase()
+    const updatedWatchList = await WatchList.findOneAndUpdate({ WatchListname: watchListName, clerkId }, watchList, { new: true })
+
+
+    // Check if watchlist is updated
+    if (!updatedWatchList) 
+      return JSON.parse(JSON.stringify(404))
+
+
+    // Return updated watchlist
+    return JSON.parse(JSON.stringify(updatedWatchList))
+  } catch (error) {
+
+
+    // Handle error
+    return JSON.parse(JSON.stringify(500))
+  }
+}
+
+
+
+
 
 
   export async function deleteWatchList(clerkId: string) {
@@ -83,28 +130,5 @@ export async function getWatchListById(clerkId: string) {
       handleError(error)
     }
   }
-  export async function updateWatchList(clerkId: string, watchList: UpdateWatchListParams) {
-    try {
-      await connectToDatabase()
-  
-      const updatedWatchList = await WatchList.findOneAndUpdate({ clerkId }, watchList, { new: true })
-  
-      if (!updatedWatchList) throw new Error('WatchList update failed')
-      return JSON.parse(JSON.stringify(updatedWatchList))
-    } catch (error) {
-      handleError(error)
-    }
-  }
 
-export async function getWatchListByNameAndId(watchListName: string, clerkId: string) {
-  try {
-    await connectToDatabase()
 
-    const watchList = await WatchList.findOne({ WatchListname: watchListName, clerkId })
-
-    if (!watchList) throw new Error('WatchList not found')
-    return JSON.parse(JSON.stringify(watchList))
-  } catch (error) {
-    handleError(error)
-  }
-}

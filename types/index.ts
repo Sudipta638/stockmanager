@@ -53,3 +53,7 @@ export type CreateUserParams = {
   export interface GetWatchListParams {
     clerkId: string;
   }
+  export interface GetWatchListByNameParams {
+    clerkId: string;
+    watchListName: string;
+  }
