@@ -1,14 +1,8 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
 import { connectToDatabase } from '../db'
 import WatchList from '../models/watchlist.model'
 import { CreateWatchListParams, UpdateWatchListParams } from '@/types'
-
-export const handleError = (error: unknown) => {
-    console.error(error);
-    throw new Error(typeof error === 'string' ? error : JSON.stringify(error));
-}
 
 
 
@@ -106,29 +100,25 @@ export async function updateWatchListbyNameandID(watchListName: string, clerkId:
 }
 
 
+// Delete watchlist by name and ID
+export async function deleteWatchListbyNameandId(watchListName: string, clerkId: string) {
+  try {
+    await connectToDatabase()
+    const watchListToDelete = await WatchList.findOneAndDelete({ WatchListname: watchListName, clerkId })
+    console.log(watchListName)
+    console.log(clerkId)
+    console.log(watchListToDelete)
+    // Check if watchlist is exist or not
+    if (!watchListToDelete) 
+      return JSON.parse(JSON.stringify(404))
 
+    // Return deleted watchlist
+    return JSON.parse(JSON.stringify(watchListToDelete))
+  } catch (error) {
 
-
-
-  export async function deleteWatchList(clerkId: string) {
-    try {
-      await connectToDatabase()
-  
-      // Find watchList to delete
-      const watchListToDelete = await WatchList.findOne({ clerkId })
-  
-      if (!watchListToDelete) {
-        throw new Error('WatchList not found')
-      }
-  
-      // Delete watchList
-      const deletedWatchList = await WatchList.findByIdAndDelete(watchListToDelete._id)
-      revalidatePath('/')
-  
-      return deletedWatchList ? JSON.parse(JSON.stringify(deletedWatchList)) : null
-    } catch (error) {
-      handleError(error)
-    }
+    // Handle error
+    return JSON.parse(JSON.stringify(500))
   }
 
+}
 

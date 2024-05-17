@@ -49,3 +49,50 @@ export const GET = async (req: Request, {params}: {params: GetWatchListByNamePar
         });
 
 }};
+// Update watchlist by name and ID
+export const PUT = async (req: Request, {params}: {params: GetWatchListByNameParams}) => {
+    try {
+
+        // Get watchlist by name and ID
+        const watchList: GetWatchListParams = await req.json();
+        const updatedWatchList = await updateWatchListbyNameandID(params.watchListName, params.clerkId,watchList);
+        console.log(params)
+        console.log(watchList)
+        // If watchlist not found
+        if (updatedWatchList === 404) {
+            return new Response(JSON.stringify("Updation Problem found"), {
+                status: 404,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+
+        // If any internal server error
+        if (updatedWatchList === 500) {
+            return new Response(JSON.stringify("Internal Server Error"), {
+                status: 500,
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+        }
+
+        // Return updated watchlist
+        return new Response(JSON.stringify(updatedWatchList), {
+            status: 200,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+    } catch (error) {
+        console.error(error);
+        return new Response(JSON.stringify("Internal Server Error"), {
+            status: 500,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+}}

@@ -6,7 +6,7 @@ import {
   ChevronDownIcon,
   DotsHorizontalIcon,
 } from "@radix-ui/react-icons";
-import { symbolsname } from '@/constants';
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -44,9 +44,9 @@ const apiKey = '54SYMM61886U7BVM'; // replace with your actual API key
 const interval = '5min';
 const outputsize = 'full';
 type LatestData = Stocks[];
-const fetchData = async (): Promise<LatestData> => {
+const fetchData = async ({compamiesname}: {compamiesname: string}): Promise<LatestData> => {
     const latestData = [];
-    
+    const symbolsname = compamiesname.split(',').map(symbol => ({ symbol }));
     for (const item of symbolsname) {
       const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&outputsize=full&apikey=demo`);
       const data = await response.json();
@@ -193,7 +193,7 @@ export const columns: ColumnDef<Stocks>[] = [
   },
 ];
 
-export function DataTableDemo() {
+export function DataTableDemo({compamiesname}: {compamiesname: string}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -204,8 +204,8 @@ export function DataTableDemo() {
   const [data, setData] = useState<LatestData>([]);
 
   useEffect(() => {
-    fetchData().then(latestData => setData(latestData));
-  }, []);
+    fetchData({ compamiesname }).then(latestData => setData(latestData));
+  }, [compamiesname]);
   const table = useReactTable({
     data,
     columns,

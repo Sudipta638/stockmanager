@@ -22,6 +22,8 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify"; // For showing toast notifications
 import "react-toastify/dist/ReactToastify.css"; // Styles for toast notifications
 import { ToastContainer } from "react-toastify"; // Container for toast notifications
+import axios from "axios";
+
 
 
 // Define form validation schema using zod
@@ -29,7 +31,7 @@ const formSchema = z.object({
   WatchListname: z.string().min(4, {
     message: "WatchList Name must be at least 4 characters.",
   }),
-  Companyname: z.string().min(1, {
+  CompanyName: z.string().min(0, {
     message: "Company Stock Symbol Name should not be null.",
   }),
 });
@@ -44,19 +46,42 @@ const UpdateWatchList = () => {
   const router = useRouter();
   const clerkId = user?.id;
   const [inputValue, setInputValue] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
   const [companies, setCompanies] = useState<string[]>([]);
   const [watchList, setWatchList] = useState<WatchListParams>(
     [] as unknown as WatchListParams
   );
+  const [warning, setWarning] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState("");
+  const [selectui, setselectui] = useState(false);
+
+
 
   // Initialize form using react-hook-form
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       WatchListname: "",
-      Companyname: "",
+      CompanyName: "",
     },
   });
+
+  useEffect(() => {
+    if (inputValue) {
+      axios
+        .get(
+          `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=tesco&apikey=demo`
+        )
+        .then((response) => {
+          if (response.data.bestMatches) {
+            setSuggestions(
+              response.data.bestMatches.map((match: any) => match["1. symbol"])
+            );
+          }
+        })
+        .catch((error) => console.error(error));
+    }
+  }, [inputValue]);
 
 
   // Fetch watchlist data from the server
@@ -92,14 +117,15 @@ const UpdateWatchList = () => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
 
     console.log(values)
-   values.Companyname = companies.join(", ");
+  
     const dataToPost = {
       ...values,
+      Companyname: companies.join(", "),
       clerkId: clerkId ?? "",
     };
     console.log(dataToPost);
       try {
-        const response = await fetch(`/api/watchlist/get/${clerkId}/${watchListName}`, {
+        const response = await fetch(`/api/watchlist/update/${clerkId}/${watchListName}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -161,38 +187,79 @@ const UpdateWatchList = () => {
           />
           <FormField
             control={form.control}
-            name="Companyname"
+            name="CompanyName"
             render={({ field }) => (
               // <div>
               <FormItem className="my-2">
                 <FormLabel>Stock Symbol</FormLabel>
                 <FormControl>
                   <div>
-                    <div className="flex">
-                      <Input
-                        className="mx-2"
-                        placeholder="Enter Your Companies Stock Symbol"
-                        {...field}
-                        value={inputValue}
-                        onChange={(event) => {
-                          const value = event.target.value;
-                          setInputValue(value);
-                          field.onChange(event);
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          setCompanies((prevCompanies) => [
-                            ...prevCompanies,
-                            inputValue,
-                          ]);
-                          setInputValue("");
-                        }}
-                      >
-                        Add company
-                      </Button>
-                    </div>
+                  <div className="flex">
+                        <Input
+                          className="mx-2"
+                          placeholder="Enter Your Companies Stock Symbol"
+                          {...field}
+                          value={inputValue}
+                          onChange={(event) => {
+                            const value = event.target.value;
+                            setInputValue(value);
+                            setselectui(false);
+                            if (value) {
+                              setSuggestions((prevSuggestions) =>
+                                prevSuggestions.filter((suggestion) =>
+                                  suggestion.includes(value)
+                                )
+                              );
+                            } else {
+                              setSuggestions([]);
+                            }
+                            if (!suggestions.includes(value)) {
+                              setWarning(true);
+                            } else {
+                              setWarning(false);
+                            }
+                          }}
+                        />
+
+                        <Button
+                          type="button"
+                          onClick={() => {
+                            if (selectedSuggestion) {
+                              setCompanies((prevCompanies) => [
+                                ...prevCompanies,
+                                selectedSuggestion,
+                              ]);
+                              setSelectedSuggestion("");
+                            }
+                          }}
+                        >
+                          Add company
+                        </Button>
+                      </div>
+                      {warning && (
+                        <p className="text-red-500">
+                          Invalid Stock Symbol .Select from suggestions
+                        </p>
+                      )}
+                      {inputValue &&!selectui&& suggestions.length> 0 && (
+                        <div className="absolute z-10 mt-2 w-60 bg-white border border-gray-200 rounded shadow-lg">
+                          {suggestions.map((suggestion, index) => (
+                            <div
+                              key={index}
+                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                              onClick={() => {
+                                setSelectedSuggestion(suggestion);
+                                setInputValue(suggestion);
+                                setSuggestions([]);
+                                setWarning(false);
+                                setselectui(true);
+                              }}
+                            >
+                              {suggestion}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     <h1 className="py-4  font-bold">
                       {" "}
                       Added Companies Stock Symbol
