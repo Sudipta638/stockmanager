@@ -63,9 +63,12 @@ const Dashboard = () => {
   }, [clerkId]);
   console.log(watchList);
 
+  if(!clerkId)
+    return <h1 className="text-center">Please login to view this page</h1>
   return (
     <div className="mx-2 md:mx-10 my-4">
       <div className="flex">
+        
         <h1 className="font-bold md:text-3xl mx-4 mt-2">Dashboard</h1>
         <div className="md:hidden">
           {!isLoading && watchlistfound ? (
@@ -86,22 +89,23 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
           ) : (
-            <h1>Watchlist not found</h1>
+            <h1 className="text-center">Watchlist not found</h1>
           )}
         </div>
       </div>
 
       <div className="flex">
         <div className="max-w-full md:w-9/12 px-4 rounded-lg my-4 border-2 border-black">
-          {!isLoading ? (
+          {!isLoading && watchlistfound ? (
             <DataTableDemo compamiesname={watchlistfordata.Companyname[0]} />
           ) : (
-            <h1>Watchlist not found</h1>
+            <h1 className="text-center">Watchlist not found</h1>
           )}
         </div>
         <div className="border-2 hidden md:flex flex-col md:w-72 md:mx-10 my-4 p-10  border-black rounded ">
           <h1 className="font-bold text-2xl">My Watchlists</h1>
-          {watchList.map((watchlist, index) => (
+          
+          { !isLoading && watchlistfound ? watchList.map((watchlist, index) => (
             <Button
               key={index}
               onClick={() => {
@@ -112,7 +116,7 @@ const Dashboard = () => {
             >
               {watchlist.WatchListname}
             </Button>
-          ))}
+          )): <h1 className="text-center">Watchlist not found</h1>}
           <Link href="/watchlist/create">
             <Button className="my-4" variant="secondary">
               Create Watchlist

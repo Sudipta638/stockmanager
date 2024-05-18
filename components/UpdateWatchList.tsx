@@ -39,6 +39,7 @@ const formSchema = z.object({
 
 // Component to update watchlist
 const UpdateWatchList = () => {
+  const APIKEY = process.env.API_KEY;
   const params = useParams<{ WatchListName: string }>();
   console.log(params.WatchListName);
   const watchListName = params.WatchListName;
@@ -70,7 +71,7 @@ const UpdateWatchList = () => {
     if (inputValue) {
       axios
         .get(
-          `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=tesco&apikey=demo`
+          `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=${APIKEY}`
         )
         .then((response) => {
           if (response.data.bestMatches) {

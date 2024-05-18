@@ -40,15 +40,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-const apiKey = '54SYMM61886U7BVM'; // replace with your actual API key
-const interval = '5min';
-const outputsize = 'full';
+
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 type LatestData = Stocks[];
 const fetchData = async ({compamiesname}: {compamiesname: string}): Promise<LatestData> => {
     const latestData = [];
+    const APIKEY = process.env.API_KEY;
     const symbolsname = compamiesname.split(',').map(symbol => ({ symbol }));
     for (const item of symbolsname) {
-      const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=IBM&interval=5min&outputsize=full&apikey=demo`);
+      const response = await fetch(`https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${item.symbol}&interval=5min&outputsize=full&apikey=${APIKEY}`);
       const data = await response.json();
        console.log(data)
 
@@ -179,14 +180,19 @@ export const columns: ColumnDef<Stocks>[] = [
     },
   },
   {
+    
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
       const payment = row.original;
-
+      const stocksymbol = row.getValue("stocksymbol") as string; // Cast stocksymbol to string
       return (
-        <Button className="flex justify-end ml-20 -mr-10">
-            Show Detials
+        <Button variant="outline" onClick={()=>{
+
+          console.log(stocksymbol)
+        }} className="flex justify-end ml-20 -mr-10">
+          <Link href={`/details/${stocksymbol}`}>  Show Detials</Link>
+          
         </Button>
       );
     },

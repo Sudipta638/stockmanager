@@ -35,6 +35,7 @@ const formSchema = z.object({
 });
 
 const CreateForm = () => {
+  const APIKEY = process.env.API_KEY;
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [companies, setCompanies] = useState<string[]>([]);
@@ -58,7 +59,7 @@ const CreateForm = () => {
     if (inputValue) {
       axios
         .get(
-          `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=tesco&apikey=demo`
+          `https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=${inputValue}&apikey=${APIKEY}`
         )
         .then((response) => {
           if (response.data.bestMatches) {
